@@ -1,0 +1,78 @@
+DOCUMENTATION FOR INTEGRATE TOMCAT FROM APACHE:
+
+#we use three servers 1.bastion server 2.apache server 3.tomcatserver
+#bastionserver bastionsg:ssh-22-anywhere
+#apacheserver apachesg:ssh-22-bastionsg  and http-80-anywhere
+#connect to bastion server to apacheserver and install apche 
+  sudo yum install httpd -y
+#and enable selinux
+  getenforce
+  
+  setenforce 0
+#stop and start apache
+ systemctl stop httpd
+ systemctl start httpd
+#install tomcat for prerequest is java with compatable in tomcat server
+#JAVA
+
+http://download.oracle.com/otn-pub/java/jdk/8u161-b12/2f38c3b165be4555a1fa6e98c45e0808/jdk-8u161-linux-x64.rpm
+
+TOMCAT
+
+   http://redrockdigimark.com/apachemirror/tomcat/tomcat-8/v8.5.29/bin/apache-tomcat-8.5.29-windows-x64.zip
+   
+   
+#install java and tomcat
+
+rpm -ivh jdk-8u161-linux-x64.rpm
+
+wget tomcat url
+ unzip apache-tomcat-8.5.29-windows-x64.zip
+ 
+ #change permissions in tomcat/bin/
+   
+   chmod 755 *.sh
+ #in bin directory start and stop tomcat
+  
+  ./startup.sh    and ./shutdown.sh
+#download jenkins.war or shoppingcart.zip
+#shoppingcart
+http://www.oracle.com/webfolder/technetwork/tutorials/obe/fmw/wls/10g/r3/cluster/session_state/files/shoppingcart.zip
+
+#JENKINS
+https://updates.jenkins-ci.org/download/war/2.110/jenkins.war
+#deploy in tomcat webapps directory
+
+#now go to apache server go to configuration file and  add integration proxy as bellow
+
+cd /etc/httpd/conf
+vi httpd.conf
+
+#jenkins application 
+
+<VirtualHost *:80>                                      
+
+ProxyRequests off
+ProxyPreserveHost On
+RedirectMatch ^/$ /jenkins
+ProxyPass /jenkins http://172.31.42.186:8080/jenkins
+ProxyPassReverse /jenkins http://172.31.42.186:8080/jenkins
+
+</VirtualHost>
+
+
+#shoppingcart application
+
+<VirtualHost *:80>
+
+ProxyRequests off
+ProxyPreserveHost On
+RedirectMatch ^/$ /shoppingcart
+ProxyPass /shoppingcart http://172.31.42.186:8080/shoppingcart
+ProxyPassReverse /shoppingcart http://172.31.42.186:8080/shoppingcart
+
+</VirtualHost>
+
+#take public ip of apache server and check it in browser 
+
+publicip or public dns name

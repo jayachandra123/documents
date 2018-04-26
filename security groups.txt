@@ -1,0 +1,25 @@
+Security Groups:
+=================
+
+                           type             range                    source                        description
+
+
+bastion-sg-sing------>     ssh                22              Anywhere(0.0.0.0/0)          firewall rule for ssh users(admin)
+
+
+alb-sg-sing    ------>     custom tcp rule    8080            Anywhere(0.0.0.0/0)          firewall rule for end users(like Http users)
+
+
+app1-sg-sing    ------>     ssh               22              custom ( bastion-sg-sing)     fierewall rule for accessing private subnet servers(like webservers,appservers)
+                            
+                            custom tcp rule   8080            custom (alb-sg-sing) 
+
+
+app2-sg-sing    ------>     ssh               22              custom ( bastion-sg-sing)     fierewall rule for accessing private subnet servers(like webservers,appservers)
+                            
+                            custom tcp rule   8080            custom (alb-sg-sing) 
+
+
+
+
+Note:-sing(region name)

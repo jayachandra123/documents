@@ -1,0 +1,33 @@
+    1   yum install -y httpd httpd-tools php gcc glibc glibc-common gd gd-devel make net-snmp
+    2  useradd nagios
+    3  groupadd nagcmd
+    4  usermod -G nagcmd nagios
+    5  usermod -G nagcmd apache
+    6  mkdir /root/nagios
+    7  ll
+    8  cd nagios/
+    9  wget https://assets.nagios.com/downloads/nagioscore/releases/nagios-4.3.4.tar.gz
+   10  sudo yum install wget
+   11  wget https://assets.nagios.com/downloads/nagioscore/releases/nagios-4.3.4.tar.gz
+   12  wget https://nagios-plugins.org/download/nagios-plugins-2.2.1.tar.gz
+   13  ll
+   14  tar -xvf nagios-4.3.4.tar.gz
+   15  ll
+   16  tar -xvf nagios-plugins-2.2.1.tar.gz
+   17  ls -ltr
+   18  cd nagios-4.3.4
+   19  ./configure --with-command-group=nagcmd
+   20  make all
+   21  ./configure --with-command-group=nagcmd
+   22  sudo yum install unzip
+   23  ./configure --with-command-group=nagcmd
+   24  make all
+   25  make install
+   26  make install-init
+   27  make install-commandmode
+   28  make install-config
+   29  vi /usr/local/nagios/etc/objects/contacts.cfg
+   30  make install-webconf
+   31  htpasswd -s -c /usr/local/nagios/etc/htpasswd.users nagiosadmin
+   32  service httpd start
+   33  ps -ef | grep httpd

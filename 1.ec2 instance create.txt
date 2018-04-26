@@ -1,0 +1,44 @@
+#Launch redhat enterprise linux using aws
+
+#first login to the aws ccount 
+
+#select ec2 in compute section
+
+#launch instances
+
+#1.choose ami as free tier and select redhat enterprise linux 7.4
+
+#2.configure instance type like t2.micro and t1.micro as free tier eligible
+
+#3.configure instance and add storage
+
+#4.add storage root-/dev/sda-10gb as default 
+
+#5.add tags is name your instance server
+
+#6.configure security group 
+   
+     create a new security group
+	   
+	    name :serversg----->ssh-22-anywhere
+		
+#7.review and launch 
+     
+	  download new key and launch instances
+	
+#connect to the server by using putty in windows
+  
+   first download putty and install in windows
+   
+    https://the.earth.li/~sgtatham/putty/latest/w64/putty-64bit-0.70-installer.msi
+
+#select putty gen and generate our key to private key
+ 
+   putty gen ---->load --->select newkey.pem---->save privatekey --->newkey.ppk and close it
+   
+#select putty and copy public ip of instance in hostname
+ putty --->hostname/publicip--->savedsession/test--->save--->ssh-->authentication-->browse ppk key-->open
+ 
+ #login as ec2-user
+ 
+    
