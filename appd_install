@@ -1,0 +1,153 @@
+Monitoring
+
+o	What are your goals for monitoring?
+o	What resources you will monitor?
+o	How often you will monitor these resources?
+o	What monitoring tools will you use?
+o	Who will perform the monitoring tasks?
+o	Who should be notified when something goes wrong?
+•	Automate monitoring tasks as much as possible.
+•	Check the log files on your EC2 instances.
+
+AppDynamics
+
+ 
+
+AppDynamics will have different agents.
+
+1)Application agent - checks application performance ( jvm usage, garbage collection, threads count , request count, slow request ,db calls , total calls, time taken to process..)
+
+2)Machine agent - checks cpu usage , memory usage ,disc usage , process check..etc.
+
+https://www.appdynamics.com/solutions/cloud-monitoring/
+
+ 
+
+Fill the form and use dummy email id to login.
+
+Next select 
+
+ 
+
+It gives you one SaaS url with already setup master server.
+ 
+
+ 
+
+
+Upload the agent into s3. From s3 download the file into your local server. ( where ever tomcat runs into that server).
+
+To download from s3 your machine requires iam role with s3 full access( policy and role).
+
+Createing IAM role.
+Goto IAM section and 
+
+ 
+
+ 
+
+ 
+
+Click on Next.
+
+  
+
+Click on Review
+Provide Role Name : common-softwares.
+ 
+
+Click on Create Role.
+
+Assign the role to ec2 machine.
+
+Select the ec2 machine  and actions
+
+ 
+
+
+ 
+
+In S3 bucket make the appD agent as public and copy the url.
+ 
+
+Login to the ec2 machine .
+Ssh -i <pemfilename>.pem ec2-user@publicip
+Switch to root user ( sudo su -)
+Goto /opt folder and create directory.
+mkdir appdynamics
+Wget <s3 appd agent url>
+
+ 
+
+Unzip <filename>.zip
+
+ 
+
+Goto tomcat/bin folder and in setenv.sh create the lines as below.
+
+Instrument Apache Tomcat
+1.	Open (or create if it doesn't already exist) the setenv.sh (Linux) or setenv.bat (Windows) file. For Tomcat 6 and later, you can put the file in the CATALINA_BASE/bin directory. For previous versions of Tomcat, put the file in the CATALINA_HOME/bin directory
+2.	Add the -javaagent argument to the file as a Catalina environment variable, as follows. 
+3.	On Linux:
+4.	export CATALINA_OPTS="$CATALINA_OPTS -javaagent:<agent_home>/javaagent.jar"
+•  Replace <agent_home> with the full path to the Java Agent JAR file.
+•  
+•  For example:
+8.	export CATALINA_OPTS="$CATALINA_OPTS -javaagent:/home/appserver/appagent/javaagent.jar"
+•  On Windows:
+10.	set CATALINA_OPTS=%CATALINA_OPTS% -javaagent:"Drive:<agent_home>\javaagent.jar"
+•  For example
+12.	set CATALINA_OPTS=%CATALINA_OPTS% -javaagent:"C:\appagent\javaagent.jar"
+•  Restart the application server. The application server must be restarted for the changes to take effect.
+Instrument Tomcat When Running as a Windows Service
+When running Tomcat as a Windows service, add the javaagent argument to your Tomcat startup properties. These instructions apply to Apache Tomcat 6.x or later versions.
+To install the Java agent in Tomcat running as a Windows service
+1.	Ensure that you are using administrator privileges.
+2.	Click Programs > Apache Tomcat > Configure Tomcat.
+3.	Click the Java tab and in the Java Options add:
+4.	-javaagent:"<agent_home>\javaagent.jar"
+•  Restart the Tomcat service to have the changes take effect.
+ 
+After updating the setenv.sh, Allow the 443 port number to connect from appDynamics controller to appD agent.( security group in inbound rules , 443 from anywhere.)
+
+ 
+
+
+ 
+
+Now restart the tomcat.
+And check the catalina.out log if any errors or connectivity info for the success to appD controller.
+
+CATALINA_HOME/bin/shutdown.sh
+
+CATALINA_HOME/bin/startup.sh
+
+CATALINA_HOME/logs/catalina.out ( tail -500f catlina.out)
+
+ 
+
+grep -i appdynamics catalina.out
+
+==========================>>>>
+Machine Agent :
+
+AppDynamics Server Visibility gives you comprehensive insight into the performance of your Servers, including CPU, Memory, Disks, Networks, Processes, and more. 
+ 
+Server Visibility requires a Standalone Machine Agent on each server of interest. If you have .NET agents installed, you can view basic machine metrics in the Node Dashboard. 
+ 
+You can view basic hardware metrics in Applications - Tiers & Nodes - Node Details - Server.
+Get Started
+
+ 
+ 
+ 
+Upload the machine agent into s3 and download into the server.
+ 
+In the server
+/opt/
+Mkdir appmachine
+And download the agent with wget. Exact the zip.
+ 
+[root@ip-172-31-27-245 scripts]# cat machineagent.sh
+nohup /opt/appmachine/jre/bin/java -jar /opt/appmachine/machineagent.jar &
+[root@ip-172-31-27-245 scripts]#
