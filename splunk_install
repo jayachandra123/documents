@@ -1,0 +1,29 @@
+--- launch two instances 1.cluster master, 2. universal forwarder
+
+--- 1.cluster master instance
+1> download splunk rpm package for linux and extract it
+2> give 777 permissions to the extract file ("chmod -R 777 splunk")
+3> start the splunk instance --> cd /splunk/bin --> "./splunk start --accept-license"
+4> now check in the browser with the public ip -->   "<ip>:8000"
+5> login and change password then it will redirect to splunk page
+6> click on "search & reporting" on left hand side
+7> now search index="main" .  By default it will not show any searches bcoz we didn't set any logs to that instance. so now go to universalforwader instance and follow from step 3 to step 7.
+8> cd /opt/splunk/bin --> "./splunk enable listen 9997 "
+9> now it will ask username:"admin" and password:"admin" (note: here you have to enter the changed password)
+and it will show msg like this "Listening for Splunk data on TCP port 9997."
+10> now go to browser and check the cluster master splunk page and then go to search page and observe "what to search" section.... it will show how many events are there and latest events timings.
+11> now search index="main" and it will show the logs.
+
+--- 2.universal forwarder instance
+1> download universal forwader rpm package for linux and extract it
+2> give 777 permissions to the extract file ("chmod -R 777 splunkforwader")
+3> cd /opt/splunkforwader/bin --> "./splunk start --accept-license"
+4> cd /var/ --> cd log/  --> ls --> there is a file called messages. now go to 
+cd /opt/splunkforwader/bin --> "./splunk add forward-server <ipaddress of clustermaster instance>:9997", 
+there are so many port numbers available in splunk and for receiving data the default port number is 9997.
+5> it will ask for username: "admin" and password: "changeme"
+6> after entering the details it will show the msg like this "Added forwarding to: 34.207.109.166:9997."
+7> By this the data forwading pipeline is ready but we didn't mention which file it has to forward. so for that --> "./splunk add monitor /var/log/messages -index main -sourcetype MyUFServerLogs" and press enter. now it will show msg like this --> "Added monitor of '/var/log/messages'."
+note: sourcetype is used to identify what type of data is coming in.
+8> now goto clustermaster instance and enable 9997 port number to accept data from this instance by like this --> go to step 8 to step 11.
+
